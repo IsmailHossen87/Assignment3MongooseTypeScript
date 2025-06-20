@@ -1,16 +1,43 @@
-import { borrowInterface } from './../interface/bookInterface';
+import { model, Schema } from "mongoose";
+import { borrowInterface } from "../interface/borrowInterface";
+import { Book } from "./Books";
 
-import { model, Schema,  } from 'mongoose';
+const borrowSchema = new Schema<borrowInterface>(
+  {
+    book: { type: Schema.Types.ObjectId, ref: "Book", required: true },
+    quantity: { type: Number, required: true, min: 1 }, // quantity কমপক্ষে 1 হতে হবে
+    dueDate: { type: Date, required: true },
+  },
+  {
+    versionKey: false,
+    timestamps: true,
+  }
+);
 
+borrowSchema.pre("save", async function (next) {
+  const borrow = this;
+  
+  try {
+    const book = await Book.findById(borrow.book);
+    
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    
+    // কপি পর্যাপ্ত আছে কিনা চেক
+    if (book.copies < borrow.quantity) {
+      throw new Error(`Not enough copies available. Only ${book.copies} copies left`);
+    }
+    
+    // কপি আপডেট করি
+    book.copies -= borrow.quantity;
+    book.available = book.copies > 0;
+    
+    await book.save();
+    next();
+  } catch (error: any) {
+    next(error); // এররটি next() এর মাধ্যমে পাস করি
+  }
+});
 
-const borrosSchema =new Schema<borrowInterface>({
-    book:{type:Schema.Types.ObjectId,required:true,ref:"Book"},
-    quantity:{type:Number,required:true},
-    dueDate :{type:Date,required:true}
-},{
-    versionKey:false,
-    timestamps:true
-})
-
-
-export const Borrow = model("Borrow",borrosSchema)
+export const Borrow = model<borrowInterface>("Borrow", borrowSchema);

@@ -15,4 +15,4 @@ const booksModel =new Schema<booksInterface>({
     timestamps:true
 })
 
-export const Books =model("Book",booksModel)
+export const Book =model<booksInterface>("Book",booksModel)

@@ -1,4 +1,3 @@
-import { Types } from "mongoose"
 
 export interface booksInterface {
     title: string;
@@ -11,8 +10,3 @@ export interface booksInterface {
 }
 
 
-export interface borrowInterface{
-    book:Types.ObjectId
-    quantity:number,
-    dueDate:Date
-}

@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
-import { Books } from "../model/Books";
+import { Book } from "../model/Books";
 export const booksRoute = express.Router();
 // Post Books
 booksRoute.post("/", async (req: Request, res: Response) => {
   try {
-    const book = await Books.create(req.body);
+    const book = await Book.create(req.body);
     res.status(201).json({
       success: true,
       message: "Book created successfully",
@@ -25,9 +25,9 @@ booksRoute.get("/", async (req: Request, res: Response) => {
 
     let allBooks;
     if (userGenre) {
-      allBooks = await Books.find({ genre: userGenre });
+      allBooks = await Book.find({ genre: userGenre });
     } else {
-      allBooks = await Books.find().sort({ genre: 1 }).limit(10);
+      allBooks = await Book.find().sort({ genre: 1 }).limit(10);
     }
     res.json({
       success: true,
@@ -46,7 +46,7 @@ booksRoute.get("/", async (req: Request, res: Response) => {
 booksRoute.get("/:bookId", async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
-    const book = await Books.findById(bookId);
+    const book = await Book.findById(bookId);
     if (!book) {
       res.status(404).json({
         success: false,
@@ -71,8 +71,11 @@ booksRoute.get("/:bookId", async (req: Request, res: Response) => {
 booksRoute.put("/:bookId", async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
-    const UpdateData = req.body 
-    const updateBook = await Books.findByIdAndUpdate(bookId,UpdateData,{new:true})
+    const UpdateData = req.body;
+    const updateBook = await Book.findByIdAndUpdate(bookId, UpdateData, {
+      new: true,
+      runValidators: true,
+    });
     if (!updateBook) {
       res.status(404).json({
         success: false,
@@ -82,7 +85,7 @@ booksRoute.put("/:bookId", async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-        message: "Book updated successfully",
+      message: "Book updated successfully",
       data: updateBook,
     });
   } catch (error) {
@@ -98,7 +101,7 @@ booksRoute.delete("/:bookId", async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
 
-    const deleteBook = await Books.findByIdAndDelete(bookId)
+    const deleteBook = await Book.findByIdAndDelete(bookId);
     if (!deleteBook) {
       res.status(404).json({
         success: false,
@@ -108,7 +111,7 @@ booksRoute.delete("/:bookId", async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-        message: "Book Deleted successfully",
+      message: "Book Deleted successfully",
       data: deleteBook,
     });
   } catch (error) {
