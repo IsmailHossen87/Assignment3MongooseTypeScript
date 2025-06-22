@@ -10,6 +10,6 @@ app.use('/api/borrow',borrowRoute)
 
 
 app.get('/',async(req:Request,res:Response)=>{
-    res.send("TO DO MONGOOSE")
+    res.send("Ecommerce Backend ")
 })
 export default app;

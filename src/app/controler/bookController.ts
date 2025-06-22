@@ -27,7 +27,7 @@ booksRoute.get("/", async (req: Request, res: Response) => {
     if (userGenre) {
       allBooks = await Book.find({ genre: userGenre });
     } else {
-      allBooks = await Book.find().sort({ genre: 1 }).limit(10);
+      allBooks = await Book.find().sort({ createdAt: 1 }).limit(10);
     }
     res.json({
       success: true,

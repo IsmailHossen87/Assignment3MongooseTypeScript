@@ -5,7 +5,7 @@ import { Book } from "./Books";
 const borrowSchema = new Schema<borrowInterface>(
   {
     book: { type: Schema.Types.ObjectId, ref: "Book", required: true },
-    quantity: { type: Number, required: true, min: 1 }, // quantity কমপক্ষে 1 হতে হবে
+    quantity: { type: Number, required: true, min: 1 }, 
     dueDate: { type: Date, required: true },
   },
   {
@@ -16,7 +16,6 @@ const borrowSchema = new Schema<borrowInterface>(
 
 borrowSchema.pre("save", async function (next) {
   const borrow = this;
-  
   try {
     const book = await Book.findById(borrow.book);
     
